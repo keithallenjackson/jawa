@@ -1,0 +1,26 @@
+{
+  "name": "jawa",
+  "version": "0.0.0",
+  "authors": [
+    "Keith Jackson <keithallenjackson@gmail.com>"
+  ],
+  "description": "JavaScript Abstracted Web Audio",
+  "main": "jawa.js",
+  "keywords": [
+    "audio",
+    "web",
+    "framework"
+  ],
+  "license": "MIT",
+  "homepage": "http://www.keithallenjackson.com/",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "qunit": "~1.18.0"
+  }
+}
