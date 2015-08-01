@@ -6,16 +6,35 @@
     function deferred() {
 
         var doneCallbacks = [],
-        alwaysCallbacks = [],
-        failCallbacks = [],
-        _then = function() {},
-        vals = [],
-        state = 'pending';
+            alwaysCallbacks = [],
+            failCallbacks = [],
+            _then = function() {},
+            progressCallbacks = [],
+            vals = [],
+            state = 'pending';
 
         var reveal = {
             done: function(func) { doneCallbacks.push(func); return this; },
             always: function(func) { alwaysCallbacks.push(func); return this; },
             fail: function(func) { failCallbacks.push(func); return this; },
+            progress: function(func) { progressCallbacks.push(func); return this; },
+            notify: function() {
+                var args = Array.prototype.slice.apply(arguments),
+                    i = 0;
+                for(; i < progressCallbacks.length; i++) {
+                    progressCallbacks[i].apply(global, args);
+                }
+                return this;
+            },
+            notifyWith: function() {
+                var args = Array.prototype.slice.apply(arguments),
+                    i = 0,
+                    ctx = args.unshift() || global;
+                for(; i < progressCallbacks.length; i++) {
+                    progressCallbacks[i].apply(ctx, args);
+                }
+                return this;
+            },
             resolve: function() {
                 vals = Array.prototype.slice.apply(arguments);
                 state = 'resolved';
@@ -55,6 +74,7 @@
                     'isRejected': this.isRejected,
                     'then': this.then,
                     'get': this.get,
+                    'progress': this.progress
                 };
             }
        };
@@ -72,6 +92,7 @@
                 obj.hasOwnProperty('isRejected') &&
                 obj.hasOwnProperty('then') &&
                 obj.hasOwnProperty('get') &&
+                obj.hasOwnProperty('progress') &&
                 obj.hasOwnProperty('states') );
     };
 
@@ -87,6 +108,9 @@
                 obj.hasOwnProperty('then') &&
                 obj.hasOwnProperty('get') &&
                 obj.hasOwnProperty('promise') &&
+                obj.hasOwnProperty('notify') &&
+                obj.hasOwnProperty('notifyWith') &&
+                obj.hasOwnProperty('progress') &&
                 obj.hasOwnProperty('states') );
     };
 
@@ -100,6 +124,7 @@
         //calls function when a promise finishes
         function promiseDone() {
             totalDone++;
+            api.notify(totalDone, promises.length);
             checkIfReady();
         }
 
