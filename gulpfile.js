@@ -12,14 +12,15 @@ gulp.task('scripts', function() {
             'src/async.js',
             'src/ajax.js',
             'src/jawa.core.js',
+            'src/jawa.fx.js',
             'src/footer.js'
         ])
         .pipe(plumber(function(error) {
             gutil.log(error.message);
             this.emit('end');
         }))
-        .pipe(concat('jawa.js'))
         .pipe(jshint())
+        .pipe(concat('jawa.js'))
         .pipe(jshint.reporter('default'))
         .pipe(gulp.dest('dist'));
 });

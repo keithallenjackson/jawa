@@ -91,16 +91,37 @@
 
 
     jawa.extend = fn.extend = function() {
-        var source = arguments[0],
-            target = arguments[1] ? arguments[1] :
-                     this === global ? fn : this;
-
-        if(!source && !(typeof source === 'object' || typeof source === 'function') ) {
+        var source,
+            target,
+            name,
+            current = 0;
+        
+        if(typeof arguments[current] === 'string') {
+            name = arguments[current];
+            current++;
+        }
+        
+        if(typeof arguments[current] === 'function' || typeof arguments[current] === 'object') {
+            source = arguments[current];
+            current++;
+        }
+        
+        if(this === jawa.fn) {
+            target = jawa.fn;
+        } else if(arguments[current]) {
+            target = arguments[current];
+        }
+        
+        if(!source || !target ) {
             return;
         }
 
-        for(var prop in source) {
-            target[prop] = source[prop];
+        if(typeof source === 'function') {
+            target[name] = source;
+        } else if(typeof source === 'object') {
+            for(var prop in source) {
+                target[prop] = source[prop];
+            }
         }
 
     };
