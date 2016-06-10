@@ -3,6 +3,22 @@
 (function(global, q, jawa) {
     'use strict';
     
+   
+    
+    q.test('extend', function(assert){
+        
+        var done = assert.async();
+        
+        jawa.fn.extend('dummy', function() {
+            return true;
+        });
+       jawa('test.mp3').done(function(instance) {
+          assert.ok(instance.dummy, 'dummy variable exists');
+          assert.ok(instance.dummy(), 'dummy returns true');
+          done();
+       });
+    });
+    
     q.test('Can load audio and have jawa instance', function(assert) {
         var done = assert.async();
 
@@ -66,5 +82,7 @@
             done();
         });
     });
+    
+    
 
 })(typeof window !== 'undefined' ? window : this, QUnit, jawa);

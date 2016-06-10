@@ -352,16 +352,37 @@
 
 
     jawa.extend = fn.extend = function() {
-        var source = arguments[0],
-            target = arguments[1] ? arguments[1] :
-                     this === global ? fn : this;
-
-        if(!source && !(typeof source === 'object' || typeof source === 'function') ) {
+        var source,
+            target,
+            name,
+            current = 0;
+        
+        if(typeof arguments[current] === 'string') {
+            name = arguments[current];
+            current++;
+        }
+        
+        if(typeof arguments[current] === 'function' || typeof arguments[current] === 'object') {
+            source = arguments[current];
+            current++;
+        }
+        
+        if(this === jawa.fn) {
+            target = jawa.fn;
+        } else if(arguments[current]) {
+            target = arguments[current];
+        }
+        
+        if(!source || !target ) {
             return;
         }
 
-        for(var prop in source) {
-            target[prop] = source[prop];
+        if(typeof source === 'function') {
+            target[name] = source;
+        } else if(typeof source === 'object') {
+            for(var prop in source) {
+                target[prop] = source[prop];
+            }
         }
 
     };
@@ -628,5 +649,38 @@
 
     global.jawa = jawa;
 
+    jawa.fn.extend("fx", function(name, types, fx_func) {
+       if(!context[nodeName]) {
+           throw "fx type does not exist";
+       }
+       if(!name) {
+           throw "fx name not valid.";
+       }
+       var func = fx_func || function(){};
+       var that = this;
+       var chn = chain();
+       var fx = [];
+       var index = 0;
+       var currentFx;
+       
+       if(typeof types === 'string') {
+           types = [types];
+       } 
+       
+       if(types instanceof Array) {
+           for(; index < type.length; index++) {
+               currentFx = context['create' + types[index]]();
+               chn.add(currentFx);
+               fx.push(currentFx);
+           }
+       } else {
+           throw "Type neither a string or an array.";
+       }
+
+       jawa.fn.extend(name, function() {
+           func.apply(this, fx);
+       });
+       
+    });
 
 })(typeof window !== 'undefined' ? window : this);
