@@ -570,6 +570,7 @@
 
     var channel = jawa.channel = function() {
         var panner = context.createPanner(),
+            pannerValue = null,
             lowPass = context.createBiquadFilter(),
             highPass = context.createBiquadFilter(),
             bandPass = context.createBiquadFilter(),
@@ -584,16 +585,16 @@
 
         lowPass.type = "lowshelf";
         lowPass.frequency.value = 440;
-        lowPass.gain.value = 0;
+        lowPass.gain.value = 15;
 
         highPass.type = "highshelf";
         highPass.frequency.value = 6000;
-        highPass.gain.value = 0;
+        highPass.gain.value = -15;
 
         bandPass.type = "peaking";
         bandPass.frequency.value = 1000;
         bandPass.Q.value = 1;
-        bandPass.gain.value = 0;
+        bandPass.gain.value = -15;
 
         gain.gain.value = 1;
 
@@ -607,9 +608,20 @@
                         val < -1 ? -1 :
                         val;
             panner.setPosition(value, 0, 0);
+            pannerValue = value;
+
             return this;
         };
+        chn.low = function(gain, cutoff) {
 
+            if(gain) {
+                lowPass.gain.value = gain;
+            }
+            if(cutoff) {
+                lowPass.frequency.value = cutoff;
+            }
+            return this;
+        };
         return chn;
 
     };
